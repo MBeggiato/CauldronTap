@@ -1,5 +1,5 @@
 name: 'Common Setup'
-description: 'Set up JDK and grant execute permissions for gradlew'
+description: 'Set up JDK and Gradle for CauldronTap builds'
 
 inputs:
   java-version:
@@ -10,14 +10,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Grant execute permission for Gradle wrapper
+      shell: bash
+      run: chmod +x gradlew
+
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
         java-version: ${{ inputs.java-version }}
-        distribution: 'microsoft'
+        distribution: 'temurin'
         cache: gradle
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v6
-      with:
-        cache-provider: basic

@@ -1,46 +1,80 @@
-name: Notify on Release
-
-permissions:
-  contents: read
+name: Release
 
 on:
-  release:
-    types:
-    - published
+  push:
+    branches:
+      - main
+    paths:
+      - CHANGELOG.md
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: Semver bump for the next release
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
-  notify:
-    name: Send job complete notification
+  release:
+    name: Release from CHANGELOG
     runs-on: ubuntu-latest
-    if: vars.DISCORD_RELEASE_WEBHOOK_ID || vars.DISCORD_WEBHOOK_ID
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v6
-
-      - name: Common Setup
-        uses: ./.github/actions/common-setup
-
-      - name: Retrieve Project Name
-        run: echo "PROJECT_NAME=$(${{github.workspace}}/gradlew -q printProjectName)" >> $GITHUB_ENV
-        id: project_name
-
-      - name: Set pre-release environment
-        if: ${{ github.event.release.prerelease }}
-        run: |
-          echo "RELEASE_TYPE=pre-release" >> $GITHUB_ENV
-
-      - name: Set release environment
-        if: ${{ !github.event.release.prerelease }}
-        run: |
-          echo "RELEASE_TYPE=release" >> $GITHUB_ENV
-
-      - name: Notify
-        uses: appleboy/discord-action@v1.2.0
         with:
-          webhook_id: ${{ !github.event.release.prerelease && vars.DISCORD_RELEASE_WEBHOOK_ID || vars.DISCORD_WEBHOOK_ID }}
-          webhook_token: ${{ !github.event.release.prerelease && secrets.DISCORD_RELEASE_WEBHOOK_TOKEN || secrets.DISCORD_WEBHOOK_TOKEN }}
-          color: "#00FF00"
-          username: "${{ env.PROJECT_NAME }} Release Bot"
-          message: >
-            An ${{ env.PROJECT_NAME }} ${{ env.RELEASE_TYPE }} was deployed by ${{ github.actor }}:
-            https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Prepare release from CHANGELOG
+        id: prepare
+        env:
+          VERSION_BUMP: ${{ github.event.inputs.version_bump || 'patch' }}
+        run: bash .github/scripts/release-from-changelog.sh
+
+      - name: Skip — nothing to release
+        if: steps.prepare.outputs.should_release != 'true'
+        run: |
+          echo "No release created."
+          echo "Reason: ${{ steps.prepare.outputs.skip_reason }}"
+
+      - name: Commit updated CHANGELOG
+        if: steps.prepare.outputs.should_release == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore(release): ${{ steps.prepare.outputs.tag }}"
+          git push
+
+      - name: Set up Java and Gradle
+        if: steps.prepare.outputs.should_release == 'true'
+        uses: ./.github/actions/common-setup
+        with:
+          java-version: '25'
+
+      - name: Build release JAR
+        if: steps.prepare.outputs.should_release == 'true'
+        run: ./gradlew -Pver=${{ steps.prepare.outputs.tag }} release --no-daemon
+
+      - name: Create GitHub release
+        if: steps.prepare.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.prepare.outputs.tag }}
+          name: CauldronTap ${{ steps.prepare.outputs.version }}
+          body_path: ${{ steps.prepare.outputs.release_notes_path }}
+          files: build/libs/CauldronTap.jar
+          draft: false
+          prerelease: false
+          make_latest: true
+          fail_on_unmatched_files: true
