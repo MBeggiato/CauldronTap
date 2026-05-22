@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [1.0.0] - 2026-05-22
+
+### Added
+
 - Fill empty buckets from **lava** and **water** cauldrons using a dispenser facing the cauldron
 - Configurable filled-bucket output: keep buckets in the **dispenser inventory** or route them to a **chest** (normal and trapped chests)
 - Configurable chest position relative to the dispenser: `back`, `front`, `down`, `up`, `left`, `right` (default: `back`)
@@ -20,3 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+# Changelog
+
+All notable changes to CauldronTap are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
