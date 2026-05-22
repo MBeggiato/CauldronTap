@@ -1,65 +1,70 @@
-# LavaTap
+# CauldronTap
 
-A [PaperMC](https://papermc.io/) plugin for Minecraft servers.
+Paper plugin that fills **empty buckets** from **lava or water cauldrons** using a **dispenser**.
 
-Built on the [CrimsonWarpedcraft plugin template](https://github.com/CrimsonWarpedcraft/plugin-template) (Paper API 26.1.2, Java 25, Gradle, Shadow JAR, Checkstyle, SpotBugs).
+## How it works
+
+1. Place a dispenser facing a **lava** or **water** cauldron.
+2. Put empty buckets in the dispenser.
+3. Power the dispenser — one empty bucket becomes a lava or water bucket; the cauldron is emptied.
 
 ## Requirements
 
-- Java 25
-- Paper 26.1.2 (or compatible server)
+- Paper **26.1.2** (or compatible)
+- Java **25**
+
+## Install
+
+Copy the built JAR from `build/libs/` into `plugins/` and restart the server.
+
+## Commands
+
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/cauldrontap reload` | `cauldrontap.reload` (default: op) | Reload `config.yml` |
+
+## Configuration
+
+File: `plugins/CauldronTap/config.yml`
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `debug` | `false` | Log diagnostics to the console and `plugins/CauldronTap/debug.log` |
+| `filled-bucket-output` | `inventory` | Where filled buckets go: `inventory` or `chest` |
+| `chest-output-position` | `back` | Chest offset when output is `chest` (see below) |
+
+### `filled-bucket-output`
+
+- **`inventory`** — filled bucket stays in the dispenser.
+- **`chest`** — filled bucket goes into a nearby chest; falls back to `inventory` if no chest is found or the chest is full.
+
+Works for both lava and water buckets. Accepts normal and trapped chests.
+
+### `chest-output-position`
+
+Only used when `filled-bucket-output: chest`. Position relative to the dispenser’s facing:
+
+| Value | Location |
+|-------|----------|
+| `back` | Behind the dispenser (default) |
+| `front` | In front (same side as the cauldron) |
+| `down` | Below |
+| `up` | Above |
+| `left` / `right` | Left or right of the facing direction |
+
+### Example
+
+```yaml
+debug: false
+filled-bucket-output: chest
+chest-output-position: back
+```
 
 ## Build
 
 ```bash
 ./gradlew build
 ```
-
-The plugin JAR is written to `build/libs/`.
-
-## Install
-
-Copy `build/libs/LavaTap-<version>.jar` into your server's `plugins/` folder and restart (or use a plugin manager).
-
-## Development
-
-| Setting | Value |
-|---------|--------|
-| Project name | `LavaTap` |
-| Package | `com.lavatap` |
-| Main class | `com.lavatap.LavaTap` |
-
-Configuration lives in `plugins/LavaTap/config.yml` after first run.
-
-## Releases
-
-| Event | Version format |
-|-------|----------------|
-| Push to `main` | `0.0.0-SNAPSHOT` |
-| Tag `vX.Y.Z` | `X.Y.Z` |
-| Tag `vX.Y.Z-RC-N` | `X.Y.Z-SNAPSHOT` |
-| Pull request | `yyMMdd-HHmm-SNAPSHOT` |
-
-Tag with semantic versioning (e.g. `v0.1.0`) to trigger a GitHub release draft.
-
-## Repository setup
-
-This project is independent of the upstream template. To publish your own copy:
-
-```bash
-# Create the repo on GitHub (CLI example)
-gh repo create LavaTap --public --source=. --remote=origin
-
-# Or add a remote manually
-git remote add origin git@github.com:MBeggiato/LavaTap.git
-git push -u origin main
-```
-
-Replace `MBeggiato/LavaTap` with your GitHub user and repository name.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

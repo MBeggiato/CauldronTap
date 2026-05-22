@@ -1,1 +1,18 @@
-# LavaTap configuration (defaults)
+# CauldronTap configuration
+
+# When true, writes detailed diagnostics to the server log and plugins/CauldronTap/debug.log
+debug: false
+
+# Where filled buckets are stored after conversion (lava or water).
+#   inventory - keep the filled bucket in the dispenser (default)
+#   chest     - try a chest near the dispenser; fall back to inventory if missing or full
+filled-bucket-output: inventory
+
+# Chest position relative to the dispenser (only used when filled-bucket-output is chest).
+#   back   - behind the dispenser, opposite its facing (default)
+#   front  - in front of the dispenser, same as its facing
+#   down   - below the dispenser
+#   up     - above the dispenser
+#   left   - to the left of the dispenser (relative to its facing)
+#   right  - to the right of the dispenser (relative to its facing)
+chest-output-position: back

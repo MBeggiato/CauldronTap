@@ -1,9 +1,9 @@
-package com.lavatap;
+package com.cauldrontap;
 
 import org.junit.jupiter.api.Test;
 
-/** Tests for {@link LavaTap}. */
-public class LavaTapTest {
+/** Tests for {@link CauldronTap}. */
+public class CauldronTapTest {
 
   @Test
   public void placeholder() {

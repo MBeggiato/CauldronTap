@@ -3,4 +3,12 @@ name: ${NAME}
 version: "${VERSION}"
 api-version: "26.1.2"
 author: MBeggiato
-description: LavaTap — a PaperMC plugin for lava-related gameplay.
+description: CauldronTap — fill buckets from lava and water cauldrons using dispensers.
+commands:
+  cauldrontap:
+    description: Reload CauldronTap configuration
+    usage: /cauldrontap reload
+permissions:
+  cauldrontap.reload:
+    description: Allows reloading CauldronTap config (including debug mode)
+    default: op
