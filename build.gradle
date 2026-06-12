@@ -66,10 +66,10 @@ repositories {
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:26.1.2.build.+'
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.10.2'
     implementation 'io.papermc:paperlib:1.0.8'
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
-    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.10.2'
     testImplementation 'io.papermc.paper:paper-api:26.1.2.build.+'
     testImplementation 'org.junit.jupiter:junit-jupiter:6.1.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.1.0'
